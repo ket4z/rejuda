@@ -1,7 +1,7 @@
 print("Vitej ve slovniku (CZ-EN)!")
 again = True
 
-while again == True:
+while again is True:
     trans_index = 0
     match = False
     pozice = 0
