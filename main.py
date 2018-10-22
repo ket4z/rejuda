@@ -1,27 +1,44 @@
-print("Vitej ve slovniku (CZ-EN)")
-language_from = input("Z jakeho jazyka? (CZ nebo EN)")
+print("Vitej ve slovniku (CZ-EN)!")
+again = True
 
-if not language_from in ("CZ", "EN"):
-	print("neni podporovany jazyk")
-	exit(101)
+while again == True:
+    trans_index = 0
+    match = False
+    pozice = 0
 
-words_cz = ["pivo", "salam", "pocitac"]
-words_en = ["beer", "sausage", "computer"]
+    language_from = input("Z jakeho jazyka? (CZ nebo EN): ")
 
-word = input("Zadej slovo na preklad")
+    if not language_from in ("CZ", "EN", "cz", "en"):
+        print("!!!NENI PODPOROVANY JAZYK!!!")
+        exit(101)
 
-match = False
-pozice = 0
-if language_from == "CZ":
-	for slovo in words_cz:
-		if slovo == word:
-			match = pozice
-		pozice = pozice + 1
+    words_cz = ["pivo", "salam", "pocitac"]
+    words_en = ["beer", "sausage", "computer"]
 
-if match == False:
-	print("Toto slovo nemam v slovniku")
-	exit(102)
+    word = input("Zadej slovo na preklad: ")
 
-print(words_en[match])
+    if language_from in ("CZ", "cz"):
+        for slovo in words_cz:
+            if slovo == word:
+                match = True
+                trans_index = pozice
+            pozice = pozice + 1
+        print(str(word) + " = " + words_en[trans_index])
+    if language_from in ("EN", "en"):
+        for slovo in words_en:
+            if slovo == word:
+                match = True
+                trans_index = pozice
+            pozice = pozice + 1
+        print(str(word) + " = " + words_cz[trans_index])
 
-# print("Nasel jsem slovo na pozici " + str(match))
+    if match is False:
+        print("Toto slovo nemam v databazi!")
+        exit(102)
+
+    again = input("Chces prelozit jeste neco? ")
+
+    if again in ("ano", "ANO", "yes", "YES"):
+        again = True
+    else:
+        again = False
