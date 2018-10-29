@@ -37,7 +37,7 @@ while again is True:
 
     if not language_from in ("CZ", "EN"):
         print("!!!NENI PODPOROVANY JAZYK!!!")
-        exit(101)
+        continue
 
     word = input("Zadej slovo na preklad: ")
 
@@ -45,7 +45,8 @@ while again is True:
 
     again = input("Chces prelozit jeste neco? ")
 
-    if again in ("ano", "ANO", "yes", "YES"):
+    again = again.upper()
+    if again in ("ANO", "YES"):
         again = True
     else:
         again = False
