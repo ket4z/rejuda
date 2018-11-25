@@ -1,25 +1,29 @@
-from PIL import Image
-import face_recognition
+import cv2
+import numpy as np
 
-# Load the jpg file into a numpy array
-image = face_recognition.load_image_file("test2.jpg")
+detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+cap=cv2.VideoCapture(0)
 
-xichtove_lokace = face_recognition.face_locations(image)
+ret,img=cap.read()
+cv2.imshow('windowname',img)
+cv2.waitKey(0)
 
-print("I found {} face(s) in this photograph.".format(len(xichtove_lokace)))
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+faces = detector.detectMultiScale(gray, 1.3, 5)
 
-for xicht in xichtove_lokace:
+for (x,y,w,h) in faces:
+    cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
 
-    # Print the location of each face in this image
-    # top, right, bottom, left = xicht
-    top = xicht[0]
-    right = xicht[1]
-    bottom = xicht[2]
-    left = xicht[3]
+cv2.imshow('frame',img)
+cv2.waitKey(0)
 
-    print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
+while (True):
+    ret, img = cap.read()
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = detector.detectMultiScale(gray, 1.3, 5)
+    for (x, y, w, h) in faces:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
-    # You can access the actual face itself like this:
-    face_image = image[top:bottom, left:right]
-    pil_image = Image.fromarray(face_image)
-    pil_image.show()
+    cv2.imshow('frame', img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
