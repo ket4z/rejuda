@@ -6,7 +6,6 @@ from tkinter import *
 
 root = Tk()
 # TODO: HW1 zacit v home adresari uzivatele ktery tento kod spousti (initialdir)
-
 root.filename = filedialog.askopenfilename(
 	initialdir = "/home/julius/Downloads",
 	title = "Select file",
@@ -56,9 +55,8 @@ del draw
 pil_image.show()
 
 # save a copy of the new image to disk?
-
+# TODO: HW1 defaultne v home adresari uzivatele ktery tento kod spousti (initialdir), stejne jako nahore u open
 root.filename = filedialog.asksaveasfilename(
-
 	initialdir = "/home/julius/Downloads",
 	title = "Select file",
 	filetypes = (("jpeg files","*.jpg"), ("png files","*.png")))
