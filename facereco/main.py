@@ -56,4 +56,12 @@ del draw
 pil_image.show()
 
 # save a copy of the new image to disk?
-# pil_image.save("image_with_boxes_and_circles.jpg")
+
+root.filename = filedialog.asksaveasfilename(
+
+	initialdir = "/home/julius/Downloads",
+	title = "Select file",
+	filetypes = (("jpeg files","*.jpg"), ("png files","*.png")))
+print ("saving on file > " + root.filename)
+
+pil_image.save(root.filename)
