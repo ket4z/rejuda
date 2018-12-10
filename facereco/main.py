@@ -1,5 +1,6 @@
 from PIL import ImageDraw
 import PIL.Image
+import PIL.ImageTk
 import face_recognition
 from tkinter import filedialog
 from tkinter import *
@@ -7,18 +8,19 @@ from os import path
 
 root = Tk()
 root.title("Face recognition")
-root.geometry("300x150")
+root.geometry("1200x800")
 home = path.expanduser('~')
-imageBefore = PhotoImage(file="default-image.jpg")
-imageAfter = PhotoImage(file="default-image.jpg")
+
+imageBeforeG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
+imageAfterG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
 
 
 class MainWindow:
 
     def __init__(self, master):
 
-        self.imageBefore = imageBefore
-        self.imageAfter = imageAfter
+        self.imageBefore = imageBeforeG
+        self.imageAfter = imageAfterG
 
         frame = Frame(master)
         frame.pack()
@@ -32,23 +34,23 @@ class MainWindow:
         self.btnFindFile = Button(frame, text="Save file", command=self.saveFile)
         self.btnFindFile.pack()
 
-        self.imgBefore = Label(frame, image=self.imageBefore)
-        self.imgBefore.pack()
+        self.imgBeforePI = Label(frame, image=self.imageBefore)
+        self.imgBeforePI.pack()
 
-        self.imgAfter = Label(frame, image=self.imageAfter)
-        self.imgAfter.pack()
+        self.imgAfterPI = Label(frame, image=self.imageAfter)
+        self.imgAfterPI.pack()
 
     def findFile(self):
-        root.filename = filedialog.askopenfilename(
-            initialdir=home,
-            title="Select file",
-            filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+        root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+        # root.filename = "koule.jpg"
         print("working on file > " + root.filename)
+        self.imageBefore = PIL.ImageTk.PhotoImage(file=root.filename)
+        self.imgBeforePI.configure(image=self.imageBefore)
+        self.imgBeforePI.image = self.imageBefore
+        root.update()
 
         # Load the jpg file into a numpy array
         image = face_recognition.load_image_file(root.filename)
-        # image = face_recognition.load_image_file("test2.jpg")
-        # image = face_recognition.load_image_file("koule.jpg")
 
         xichtove_lokace = face_recognition.face_locations(image)
 
@@ -86,8 +88,9 @@ class MainWindow:
         del draw
 
         # display the resulting image
-        self.imageAfter = pil_image
-        self.imageBefore = image
+        self.imageAfter = PIL.ImageTk.PhotoImage(pil_image)
+        self.imgAfterPI.configure(image=self.imageAfter)
+        self.imgAfterPI.image = self.imageAfter
         root.update()
 
     def saveFile(self):
