@@ -95,10 +95,7 @@ class MainWindow:
 
     def saveFile(self):
         # save a copy of the new image to disk?
-        root.filename = filedialog.asksaveasfilename(
-            initialdir=home,
-            title="Select file",
-            filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+        root.filename = filedialog.asksaveasfile(mode='w', defaultextension=".png", filetypes=(("PNG file", "*.png"),("All Files", "*.*") ))
         print("saving on file > " + root.filename)
 
         self.imageAfter.save(root.filename)
