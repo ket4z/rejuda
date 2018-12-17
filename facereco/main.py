@@ -4,7 +4,7 @@ import PIL.ImageTk
 import face_recognition
 from tkinter import filedialog
 from tkinter import *
-from os import path
+from os import path, system
 
 root = Tk()
 root.title("Face recognition")
@@ -14,7 +14,6 @@ home = path.expanduser('~')
 imageBeforeG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
 imageAfterG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
 
-
 class MainWindow:
 
     def __init__(self, master):
@@ -22,27 +21,33 @@ class MainWindow:
         self.imageBefore = imageBeforeG
         self.imageAfter = imageAfterG
 
+        self.lblHeader = Label(master, text="Recognize face(s) from your own photo!")
+        self.lblHeader.config(font=("", 30))
+        self.lblHeader.pack()
+
         frame = Frame(master)
         frame.pack()
 
-        self.lblHeader = Label(frame, text="Recognize face(s) from your own photo!")
-        self.lblHeader.pack()
-
         self.btnFindFile = Button(frame, text="Find file", command=self.findFile)
-        self.btnFindFile.pack()
+        # self.btnFindFile.pack()
+        self.btnFindFile.grid(row=0, column=0)
 
         self.btnFindFile = Button(frame, text="Save file", command=self.saveFile)
-        self.btnFindFile.pack()
+        self.btnFindFile.grid(row=0, column=1)
 
         self.imgBeforePI = Label(frame, image=self.imageBefore)
-        self.imgBeforePI.pack()
+        self.imgBeforePI.grid(row=1, column=0)
 
         self.imgAfterPI = Label(frame, image=self.imageAfter)
-        self.imgAfterPI.pack()
+        self.imgAfterPI.grid(row=1, column=1)
+
+        self.lblAkce = Label(master, text="Nahraj obrazek")
+        self.lblAkce.pack()
+
 
     def findFile(self):
-        root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
-        # root.filename = "koule.jpg"
+        # root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+        root.filename = "koule.jpg"
         print("working on file > " + root.filename)
         self.imageBefore = PIL.ImageTk.PhotoImage(file=root.filename)
         self.imgBeforePI.configure(image=self.imageBefore)
@@ -89,17 +94,22 @@ class MainWindow:
 
         # display the resulting image
         self.imageAfter = PIL.ImageTk.PhotoImage(pil_image)
+        self.imageToSave = pil_image
         self.imgAfterPI.configure(image=self.imageAfter)
         self.imgAfterPI.image = self.imageAfter
+
+        self.lblAkce.configure(text="Fotografie uspesne konvertovana, muzes vysledek ulozit")
+
         root.update()
 
     def saveFile(self):
         # save a copy of the new image to disk?
-        root.filename = filedialog.asksaveasfile(mode='w', defaultextension=".png", filetypes=(("PNG file", "*.png"),("All Files", "*.*") ))
-        print("saving on file > " + root.filename)
+        filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
+        # print("saving on file > " + root.filename)
 
-        self.imageAfter.save(root.filename)
-
+        self.imageToSave.save(filename)
+        self.lblAkce.configure(text="Fotografie byla ulozena do " + str(filename.name))
+        # system("open " + filename.name)
 
 mw = MainWindow(root)
 root.mainloop()
