@@ -4,7 +4,7 @@ import PIL.ImageTk
 import face_recognition
 from tkinter import filedialog
 from tkinter import *
-from os import path
+from os import path, system
 
 root = Tk()
 root.title("Face recognition")
@@ -22,6 +22,7 @@ class MainWindow:
         self.imageAfter = imageAfterG
 
         self.lblHeader = Label(master, text="Recognize face(s) from your own photo!")
+        self.lblHeader.config(font=("", 30))
         self.lblHeader.pack()
 
         frame = Frame(master)
@@ -39,6 +40,10 @@ class MainWindow:
 
         self.imgAfterPI = Label(frame, image=self.imageAfter)
         self.imgAfterPI.grid(row=1, column=1)
+
+        self.lblAkce = Label(master, text="Nahraj obrazek")
+        self.lblAkce.pack()
+
 
     def findFile(self):
         # root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
@@ -92,15 +97,19 @@ class MainWindow:
         self.imageToSave = pil_image
         self.imgAfterPI.configure(image=self.imageAfter)
         self.imgAfterPI.image = self.imageAfter
+
+        self.lblAkce.configure(text="Fotografie uspesne konvertovana, muzes vysledek ulozit")
+
         root.update()
 
     def saveFile(self):
         # save a copy of the new image to disk?
-        root.filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
+        filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
         # print("saving on file > " + root.filename)
 
-        self.imageToSave.save(root.filename)
-
+        self.imageToSave.save(filename)
+        self.lblAkce.configure(text="Fotografie byla ulozena do " + str(filename.name))
+        # system("open " + filename.name)
 
 mw = MainWindow(root)
 root.mainloop()
