@@ -4,11 +4,12 @@ import PIL.ImageTk
 import face_recognition
 from tkinter import filedialog
 from tkinter import *
-from os import path, system
+from os import path
 
 root = Tk()
 root.title("Face recognition")
 root.geometry("1600x800")
+
 home = path.expanduser('~')
 
 imageBeforeG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
@@ -47,6 +48,8 @@ class MainWindow:
     def findFile(self):
         root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
         #root.filename = "koule.jpg"
+        # TODO: osetrit pripad kdyz uzivatel nevybre obrazek
+        # TODO: refaktorovat metodu findFile - oddelit naloadovani obrazku a vyhledani obliceju (vlastni metoda findFaces)
         print("working on file > " + root.filename)
         self.imageBefore = PIL.ImageTk.PhotoImage(file=root.filename)
         self.imgBeforePI.configure(image=self.imageBefore)
@@ -58,6 +61,7 @@ class MainWindow:
 
         xichtove_lokace = face_recognition.face_locations(image)
 
+        # TODO: osetrit pripad kdy se nenasli zadne obliceje, neloadovat vysledny obrazek do imageAfter
         print("I found {} face(s) in this photograph.".format(len(xichtove_lokace)))
 
         # Convert the image to a PIL-format image so that we can draw on top of it with the Pillow library
@@ -120,3 +124,6 @@ class MainWindow:
 
 mw = MainWindow(root)
 root.mainloop()
+
+
+# TODO: [optional] implement resizing of loaded image down to 650px width, height proportional
