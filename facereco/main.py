@@ -8,7 +8,7 @@ from os import path, system
 
 root = Tk()
 root.title("Face recognition")
-root.geometry("1200x800")
+root.geometry("1600x800")
 home = path.expanduser('~')
 
 imageBeforeG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
@@ -44,10 +44,9 @@ class MainWindow:
         self.lblAkce = Label(master, text="Nahraj obrazek")
         self.lblAkce.pack()
 
-
     def findFile(self):
-        # root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
-        root.filename = "koule.jpg"
+        root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+        #root.filename = "koule.jpg"
         print("working on file > " + root.filename)
         self.imageBefore = PIL.ImageTk.PhotoImage(file=root.filename)
         self.imgBeforePI.configure(image=self.imageBefore)
@@ -104,12 +103,20 @@ class MainWindow:
 
     def saveFile(self):
         # save a copy of the new image to disk?
-        filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
+        self.filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
         # print("saving on file > " + root.filename)
 
-        self.imageToSave.save(filename)
-        self.lblAkce.configure(text="Fotografie byla ulozena do " + str(filename.name))
+        self.imageToSave.save(self.filename)
+        self.lblAkce.configure(text="Fotografie byla ulozena do " + str(self.filename.name) + "   > muzes otevrit kliknutim!")
+        self.lblAkce.bind("<Button-1>", self.openFile)
+
         # system("open " + filename.name)
+
+    def openFile(self, event):
+        #print("you clicked", event.widget)
+        savedImage = PIL.Image.open(self.filename.name)
+        savedImage.show()
+
 
 mw = MainWindow(root)
 root.mainloop()
