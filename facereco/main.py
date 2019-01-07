@@ -114,15 +114,18 @@ class MainWindow:
             root.update()
 
     def saveFile(self):
-        # save a copy of the new image to disk?
-        self.filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
-        # print("saving on file > " + root.filename)
+        try:
+            # save a copy of the new image to disk?
+            self.filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
+            # print("saving on file > " + root.filename)
 
-        self.imageToSave.save(self.filename)
-        self.lblAkce.configure(text="Fotografie byla ulozena do " + str(self.filename.name) + "   > muzes otevrit kliknutim!")
-        self.lblAkce.bind("<Button-1>", self.openFile)
+            self.imageToSave.save(self.filename)
+            self.lblAkce.configure(text="Fotografie byla ulozena do " + str(self.filename.name) + "   > muzes otevrit kliknutim!")
+            self.lblAkce.bind("<Button-1>", self.openFile)
 
-        # system("open " + filename.name)
+            # system("open " + filename.name)
+        except:
+            messagebox.showwarning('Warning!', "Photo hasn't been saved!")
 
     def openFile(self, event):
         #print("you clicked", event.widget)
