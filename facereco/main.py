@@ -51,15 +51,31 @@ class MainWindow:
 
     def findFile(self):
         try:
-            root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
-            #root.filename = "koule.jpg"
+            # root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+            root.filename = "koule.jpg"
             print("working on file > " + root.filename)
-            self.imageBefore = PIL.ImageTk.PhotoImage(file=root.filename)
+
+            image = self.resizeImage(root.filename)
+
+            self.imageBefore = PIL.ImageTk.PhotoImage(image)
             self.imgBeforePI.configure(image=self.imageBefore)
             self.imgBeforePI.image = self.imageBefore
             root.update()
         except:
-            self.ffError()
+           self.ffError()
+
+    def resizeImage(self, filename):
+        try:
+            image = PIL.Image.open(filename)
+            imageSize = image.size
+            print(imageSize)
+            w1 = imageSize[0]
+            h1 = imageSize[1]
+            w2 = 600  # desired image width after resizing
+            h2 = w2 * h1 / w1
+            return image.resize((w2, int(h2)))
+        except:
+            messagebox.showerror("Nepovedlo se zmenit velikost obrazku")
 
     def findFaces(self):
         # Load the jpg file into a numpy array
@@ -140,4 +156,4 @@ mw = MainWindow(root)
 root.mainloop()
 
 
-# TODO: [optional] implement resizing of loaded image down to 650px width, height proportional
+# TODO: resize also output image using resizeImage() method
