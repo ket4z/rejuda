@@ -9,19 +9,29 @@ from os import path
 
 root = Tk()
 root.title("Face recognition")
-root.geometry("1600x800")
+root.attributes('-zoomed', True)
 
 home = path.expanduser('~')
-
-imageBeforeG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
-imageAfterG = PIL.ImageTk.PhotoImage(file="default-image.jpg")
 
 class MainWindow:
 
     def __init__(self, master):
 
-        self.imageBefore = imageBeforeG
-        self.imageAfter = imageAfterG
+        # Setting image... to a default image
+        self.imageBeforeG = PIL.Image.open("default-image.jpg")
+        self.imageAfterG = PIL.Image.open("default-image.jpg")
+
+        # Resizing image... to defined resolution
+        self.imageBeforeG = self.resizeImage(self.imageBeforeG)
+        self.imageAfterG = self.resizeImage(self.imageAfterG)
+
+        # Saving image... to ImageTk.PhotoImage / for being able to show on label
+        self.imageBeforeG = PIL.ImageTk.PhotoImage(self.imageBeforeG)
+        self.imageAfterG = PIL.ImageTk.PhotoImage(self.imageAfterG)
+
+        # Saving image... to ImageTk.PhotoImage / for being able to show on label
+        self.imageBefore = self.imageBeforeG
+        self.imageAfter = self.imageAfterG
 
         self.lblHeader = Label(master, text="Recognize face(s) from your own photo!")
         self.lblHeader.config(font=("", 30))
@@ -61,6 +71,10 @@ class MainWindow:
             self.imageBefore = PIL.ImageTk.PhotoImage(image)
             self.imgBeforePI.configure(image=self.imageBefore)
             self.imgBeforePI.image = self.imageBefore
+
+            self.imgAfterPI.configure(image=self.imageAfterG)
+            self.imgAfterPI.image = self.imageAfterG
+
             root.update()
         except:
            self.ffError()
@@ -71,7 +85,7 @@ class MainWindow:
             print(imageSize)
             w1 = imageSize[0]
             h1 = imageSize[1]
-            w2 = 600  # desired image width after resizing
+            w2 = 900  # desired image width after resizing
             h2 = w2 * h1 / w1
             return image.resize((w2, int(h2)))
         except:
@@ -94,6 +108,8 @@ class MainWindow:
             # Create a Pillow ImageDraw Draw instance to draw with
             draw = ImageDraw.Draw(pil_image)
 
+            counter = 0
+
             for xicht in xichtove_lokace:
                 # Print the location of each face in this image
                 # top, right, bottom, left = xicht
@@ -111,10 +127,16 @@ class MainWindow:
                 # pil_image = Image.fromarray(face_image)
                 # pil_image.show()
 
-                # modry boxik
-                draw.rectangle(((left, top), (right, bottom)), outline=(0, 0, 255))
+                # cerveny boxik s tloustkou 3px
+                draw.rectangle(((left, top), (right, bottom)), outline=(255, 0, 0), width=3)
+                # jmenovka
+                draw.rectangle(((left, bottom), (right, bottom + 20)), outline=(255, 0, 0), fill=255)
+
+                counter = counter + 1
+                draw.text(((left + 5, bottom + 5)), text=str(counter), fill=(255, 255, 255))
+
                 # cerveny kruh
-                draw.ellipse(((left, top), (right, bottom)), None, outline=(255, 0, 0))
+                # draw.ellipse(((left, top), (right, bottom)), None, outline=(255, 0, 0))
 
             # free the drawing library from memory
             del draw
