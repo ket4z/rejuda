@@ -55,7 +55,8 @@ class MainWindow:
             root.filename = "koule.jpg"
             print("working on file > " + root.filename)
 
-            image = self.resizeImage(root.filename)
+            imageToResize = PIL.Image.open(root.filename)
+            image = self.resizeImage(imageToResize)
 
             self.imageBefore = PIL.ImageTk.PhotoImage(image)
             self.imgBeforePI.configure(image=self.imageBefore)
@@ -64,9 +65,8 @@ class MainWindow:
         except:
            self.ffError()
 
-    def resizeImage(self, filename):
+    def resizeImage(self, image):
         try:
-            image = PIL.Image.open(filename)
             imageSize = image.size
             print(imageSize)
             w1 = imageSize[0]
@@ -75,7 +75,7 @@ class MainWindow:
             h2 = w2 * h1 / w1
             return image.resize((w2, int(h2)))
         except:
-            messagebox.showerror("Nepovedlo se zmenit velikost obrazku")
+            messagebox.showerror("Chyba!", "Nepovedlo se zmenit velikost obrazku")
 
     def findFaces(self):
         # Load the jpg file into a numpy array
@@ -120,7 +120,11 @@ class MainWindow:
             del draw
 
             # display the resulting image
-            self.imageAfter = PIL.ImageTk.PhotoImage(pil_image)
+
+            # lets resize it first
+            resizedImage = self.resizeImage(pil_image)
+
+            self.imageAfter = PIL.ImageTk.PhotoImage(resizedImage)
             self.imageToSave = pil_image
             self.imgAfterPI.configure(image=self.imageAfter)
             self.imgAfterPI.image = self.imageAfter
