@@ -6,10 +6,22 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import *
 from os import path
+from screeninfo import get_monitors
+import re
+
+for m in get_monitors():
+    print(str(m))
+    ints = re.findall(r'\d+', str(m))
+    x = ints[0]
+    print(x)
+
+resizeTargetSize = (int(x) - 200) / 2
+print(str(resizeTargetSize))
 
 root = Tk()
 root.title("Face recognition")
 root.attributes('-zoomed', True)
+
 
 home = path.expanduser('~')
 
