@@ -73,8 +73,8 @@ class MainWindow:
 
     def findFile(self):
         try:
-            # root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
-            root.filename = "koule.jpg"
+            root.filename = filedialog.askopenfilename(initialdir=home, title="Select file", filetypes=(("jpeg files", "*.jpg"), ("png files", "*.png")))
+            # root.filename = "koule.jpg"
             print("working on file > " + root.filename)
 
             imageToResize = PIL.Image.open(root.filename)
@@ -94,12 +94,22 @@ class MainWindow:
     def resizeImage(self, image):
         try:
             imageSize = image.size
-            print(imageSize)
-            w1 = imageSize[0]
-            h1 = imageSize[1]
-            w2 = 900  # desired image width after resizing
-            h2 = w2 * h1 / w1
-            return image.resize((w2, int(h2)))
+            if imageSize[1] > imageSize[0]:
+                print(imageSize)
+                w1 = imageSize[0]
+                h1 = imageSize[1]
+                w2 = w1 - 400  # desired image width after resizing
+                h2 = w2 * h1 / w1
+                print(str(w2))
+                return image.resize((int(w2), int(h2)))
+            else:
+                imageSize = image.size
+                print(imageSize)
+                w1 = imageSize[0]
+                h1 = imageSize[1]
+                w2 = 900  # desired image width after resizing
+                h2 = w2 * h1 / w1
+                return image.resize((w2, int(h2)))
         except:
             messagebox.showerror("Chyba!", "Nepovedlo se zmenit velikost obrazku")
 
