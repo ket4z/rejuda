@@ -1,5 +1,20 @@
 import face_recognition
 import cv2
+import sqlite3
+from sqlite3 import Error
+
+
+def create_connection(db_file):
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print(e)
+    return None
+
+db_connection = create_connection("facereco.db")
+
+print(db_connection)
 
 # reference to webcam #0 (default)
 video_capture = cv2.VideoCapture(0)
@@ -20,16 +35,17 @@ marian_face_encoding = face_recognition.face_encodings(marian_image)[0]
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [
-    julo_face_encoding,
     tomas_face_encoding,
+    marian_face_encoding,
     marek_face_encoding,
-    marian_face_encoding
+    julo_face_encoding
 ]
+
 known_face_names = [
-    "Julo",
     "Tomas",
+    "Marian",
     "Marek",
-    "Marian"
+    "Julo"
 ]
 
 # Initialize some variables
