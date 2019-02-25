@@ -8,12 +8,13 @@ from tkinter import *
 from os import path
 from screeninfo import get_monitors
 import re
+from AppKit import NSScreen
 
-for m in get_monitors():
-    print(str(m))
-    ints = re.findall(r'\d+', str(m))
-    x = ints[0]
-    print(x)
+#for m in get_monitors():
+ #   print(str(m))
+  #  ints = re.findall(r'\d+', str(m))
+   # x = ints[0]
+    #print(x)
 
 resizeTargetSize = (int(x) - 200) / 2
 print(str(resizeTargetSize))
@@ -22,7 +23,7 @@ root = Tk()
 root.title("Face recognition")
 root.attributes('-zoomed', True)
 
-
+git
 home = path.expanduser('~')
 
 class MainWindow:
@@ -167,15 +168,7 @@ class MainWindow:
 
             root.update()
 
-    def saveFile(self):
-        try:
-            # save a copy of the new image to disk?
-            self.filename = filedialog.asksaveasfile(mode='w', defaultextension=".jpg", filetypes=(("JPEG file", "*.jpg"),("All Files", "*.*") ))
-            # print("saving on file > " + root.filename)
 
-            self.imageToSave.save(self.filename)
-            self.lblAkce.configure(text="Fotografie byla ulozena do " + str(self.filename.name) + "   > muzes otevrit kliknutim!")
-            self.lblAkce.bind("<Button-1>", self.openFile)
 
             # system("open " + filename.name)
         except:

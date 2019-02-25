@@ -12,14 +12,24 @@ julo_face_encoding = face_recognition.face_encodings(julo_image)[0]
 tomas_image = face_recognition.load_image_file("tomas.jpg")
 tomas_face_encoding = face_recognition.face_encodings(tomas_image)[0]
 
+marek_image = face_recognition.load_image_file("marek.jpg")
+marek_face_encoding = face_recognition.face_encodings(marek_image)[0]
+
+marian_image = face_recognition.load_image_file("marian.jpg")
+marian_face_encoding = face_recognition.face_encodings(marian_image)[0]
+
 # Create arrays of known face encodings and their names
 known_face_encodings = [
     julo_face_encoding,
-    tomas_face_encoding
+    tomas_face_encoding,
+    marek_face_encoding,
+    marian_face_encoding
 ]
 known_face_names = [
     "Julo",
-    "Tomas"
+    "Tomas",
+    "Marek",
+    "Marian"
 ]
 
 # Initialize some variables
