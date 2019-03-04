@@ -3,7 +3,6 @@ import cv2
 import sqlite3
 from sqlite3 import Error
 
-
 def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
@@ -12,9 +11,27 @@ def create_connection(db_file):
         print(e)
     return None
 
-db_connection = create_connection("facereco.db")
+def select_faces_from_db(connection):
+    cursor = connection.cursor()
+    cursor.execute("SELECT ID, name FROM faces")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
 
+def add_face_to_db(connection, user_id, user_name, user_image):
+    cursor = connection.cursor()
+    SQL = "INSERT INTO faces (ID, name, image) VALUES (%d, '%s', null)" % (user_id, user_name)
+    # print(SQL)
+    cursor.execute(SQL)
+    connection.commit()
+
+
+# mina flow BEGIN #####################################
+
+db_connection = create_connection("facereco.db")
 print(db_connection)
+# add_face_to_db(db_connection, 6, "Kuba", "")
+select_faces_from_db(db_connection)
 
 # reference to webcam #0 (default)
 video_capture = cv2.VideoCapture(0)
