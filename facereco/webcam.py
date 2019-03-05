@@ -13,10 +13,11 @@ def create_connection(db_file):
 
 def select_faces_from_db(connection):
     cursor = connection.cursor()
-    cursor.execute("SELECT ID, name FROM faces")
+    cursor.execute("SELECT ID, name, image FROM faces WHERE image <> ''")
     rows = cursor.fetchall()
     for row in rows:
-        print(row)
+        print("%d - %s" % (row[0], row[1]))
+    return rows
 
 def add_face_to_db(connection, user_id, user_name, user_image):
     cursor = connection.cursor()
@@ -31,45 +32,58 @@ def add_face_to_db(connection, user_id, user_name, user_image):
 db_connection = create_connection("facereco.db")
 print(db_connection)
 # add_face_to_db(db_connection, 6, "Kuba", "")
-select_faces_from_db(db_connection)
+db_faces = select_faces_from_db(db_connection)
 
 # reference to webcam #0 (default)
-video_capture = cv2.VideoCapture(0)
+# docasne vypinam, pro az
+# video_capture = cv2.VideoCapture(0)
 
-# Load a sample picture and learn how to recognize it.
-julo_image = face_recognition.load_image_file("julo.jpg")
-julo_face_encoding = face_recognition.face_encodings(julo_image)[0]
+for db_face in db_faces:
+    # TODO: preulozit data z db pole "image" do docasneho fyzickeho souboru
+    # TODO: natahnout fotku z tohoto docasneho souboru, nikoli z tomas.jpg
+    image_from_db = face_recognition.load_image_file("tomas.jpg")
+    face_encoding = face_recognition.face_encodings(image_from_db)[0]
+    # TODO: smazat docasny soubor
+    # TODO: pridat nakodovany oblicej (face_encoding) do face encodings
+    # TODO: pridat jmeno z db do known names
 
-# Load a second sample picture and learn how to recognize it.
-tomas_image = face_recognition.load_image_file("tomas.jpg")
-tomas_face_encoding = face_recognition.face_encodings(tomas_image)[0]
-
-marek_image = face_recognition.load_image_file("marek.jpg")
-marek_face_encoding = face_recognition.face_encodings(marek_image)[0]
-
-marian_image = face_recognition.load_image_file("marian.jpg")
-marian_face_encoding = face_recognition.face_encodings(marian_image)[0]
-
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    tomas_face_encoding,
-    marian_face_encoding,
-    marek_face_encoding,
-    julo_face_encoding
-]
-
-known_face_names = [
-    "Tomas",
-    "Marian",
-    "Marek",
-    "Julo"
-]
+# # Load a sample picture and learn how to recognize it.
+# julo_image = face_recognition.load_image_file("julo.jpg")
+# julo_face_encoding = face_recognition.face_encodings(julo_image)[0]
+#
+# # Load a second sample picture and learn how to recognize it.
+# tomas_image = face_recognition.load_image_file("tomas.jpg")
+# tomas_face_encoding = face_recognition.face_encodings(tomas_image)[0]
+#
+# marek_image = face_recognition.load_image_file("marek.jpg")
+# marek_face_encoding = face_recognition.face_encodings(marek_image)[0]
+#
+# marian_image = face_recognition.load_image_file("marian.jpg")
+# marian_face_encoding = face_recognition.face_encodings(marian_image)[0]
+#
+# # Create arrays of known face encodings and their names
+# known_face_encodings = [
+#     tomas_face_encoding,
+#     marian_face_encoding,
+#     marek_face_encoding,
+#     julo_face_encoding
+# ]
+#
+# known_face_names = [
+#     "Tomas",
+#     "Marian",
+#     "Marek",
+#     "Julo"
+# ]
 
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+
+# docasny exit jeste pred analyzou webcam streamu, pro ucely ladeni kodovani obliceju z DB, pro produkci oedstranit
+exit(101)
 
 while True:
     # Grab a single frame of video
