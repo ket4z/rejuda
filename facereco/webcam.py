@@ -1,3 +1,4 @@
+import os
 import face_recognition
 import cv2
 import sqlite3
@@ -36,45 +37,38 @@ db_faces = select_faces_from_db(db_connection)
 
 # reference to webcam #0 (default)
 # docasne vypinam, pro az
-# video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(0)
+
+known_face_encodings = []
+known_face_names = []
 
 for db_face in db_faces:
-    # TODO: preulozit data z db pole "image" do docasneho fyzickeho souboru
-    # TODO: natahnout fotku z tohoto docasneho souboru, nikoli z tomas.jpg
-    image_from_db = face_recognition.load_image_file("tomas.jpg")
-    face_encoding = face_recognition.face_encodings(image_from_db)[0]
-    # TODO: smazat docasny soubor
-    # TODO: pridat nakodovany oblicej (face_encoding) do face encodings
-    # TODO: pridat jmeno z db do known names
+    print("working on %s, storing image from db to temp disk file" % db_face[1])
 
-# # Load a sample picture and learn how to recognize it.
-# julo_image = face_recognition.load_image_file("julo.jpg")
-# julo_face_encoding = face_recognition.face_encodings(julo_image)[0]
-#
-# # Load a second sample picture and learn how to recognize it.
-# tomas_image = face_recognition.load_image_file("tomas.jpg")
-# tomas_face_encoding = face_recognition.face_encodings(tomas_image)[0]
-#
-# marek_image = face_recognition.load_image_file("marek.jpg")
-# marek_face_encoding = face_recognition.face_encodings(marek_image)[0]
-#
-# marian_image = face_recognition.load_image_file("marian.jpg")
-# marian_face_encoding = face_recognition.face_encodings(marian_image)[0]
-#
-# # Create arrays of known face encodings and their names
-# known_face_encodings = [
-#     tomas_face_encoding,
-#     marian_face_encoding,
-#     marek_face_encoding,
-#     julo_face_encoding
-# ]
-#
-# known_face_names = [
-#     "Tomas",
-#     "Marian",
-#     "Marek",
-#     "Julo"
-# ]
+    # temporary storage of db image to disk file tempfile.jpg
+    with open("tempfile.jpg", "wb") as f_temp:
+        f_temp.write(db_face[2])
+
+    # load this temp image to face reco
+    print("loading image from disk to face reco engine")
+    image_from_db = face_recognition.load_image_file("tempfile.jpg")
+    print("encoding face")
+    try:
+        face_encoding = face_recognition.face_encodings(image_from_db)[0]
+
+        # add encoded face to array of faces (face_encoding)
+        known_face_encodings.append(face_encoding)
+
+        # add name to known names
+        known_face_names.append(db_face[1])
+    except:
+        print("could not find any face on provided image")
+
+    # delete temp file
+    print("deleting temp file")
+    os.remove("tempfile.jpg")
+
+    print("----------")
 
 # Initialize some variables
 face_locations = []
@@ -82,8 +76,6 @@ face_encodings = []
 face_names = []
 process_this_frame = True
 
-# docasny exit jeste pred analyzou webcam streamu, pro ucely ladeni kodovani obliceju z DB, pro produkci oedstranit
-exit(101)
 
 while True:
     # Grab a single frame of video
@@ -96,6 +88,7 @@ while True:
     rgb_small_frame = small_frame[:, :, ::-1]
 
     # Only process every other frame of video to save time
+    # TODO: process every N-th frame instead of every other, set 3, 4, etc for N ...
     if process_this_frame:
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
@@ -135,6 +128,8 @@ while True:
 
     # Display the resulting image
     cv2.imshow('Video', frame)
+
+    # TODO: prepare savin unrecognized faces to DB on click or keypress, ask for name under which this face should be stored
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
