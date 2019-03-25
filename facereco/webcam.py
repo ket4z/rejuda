@@ -43,6 +43,10 @@ known_face_encodings = []
 known_face_names = []
 
 for db_face in db_faces:
+    # debug
+    if db_face[0] > 99:
+        continue
+
     print("working on %s, storing image from db to temp disk file" % db_face[1])
 
     # temporary storage of db image to disk file tempfile.jpg
@@ -129,11 +133,18 @@ while True:
     # Display the resulting image
     cv2.imshow('Video', frame)
 
-    # TODO: prepare savin unrecognized faces to DB on click or keypress, ask for name under which this face should be stored
+    # TODO: prepare saving unrecognized faces to DB on click or keypress, ask for name under which this face should be stored
 
-    # Hit 'q' on the keyboard to quit!
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    # hit 'q' on the keyboard to quit
+    key = cv2.waitKey(1)
+    if key == ord('q'):
         break
+    # hit 's' on the keyboard to save new face
+    elif key == ord('s'):
+        if name == 'Neznam':
+            print("I dont know this face, going to save it")
+        else:
+            print("I already know this face, it is %s" % name)
 
 # Release handle to the webcam
 video_capture.release()
