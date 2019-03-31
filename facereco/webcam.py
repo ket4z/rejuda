@@ -3,6 +3,7 @@ import face_recognition
 import cv2
 import sqlite3
 from sqlite3 import Error
+from PIL import Image
 
 def create_connection(db_file):
     try:
@@ -44,7 +45,7 @@ known_face_names = []
 
 for db_face in db_faces:
     # debug
-    if db_face[0] > 99:
+    if db_face[0] > 1:
         continue
 
     print("working on %s, storing image from db to temp disk file" % db_face[1])
@@ -84,6 +85,9 @@ process_this_frame = True
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
+
+    # copy untampered frame
+    frame_copy = frame.copy()
 
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
@@ -142,7 +146,11 @@ while True:
     # hit 's' on the keyboard to save new face
     elif key == ord('s'):
         if name == 'Neznam':
-            print("I dont know this face, going to save it")
+            print("I don't know thsis face, going to save it")
+            print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
+            face_image = frame_copy[top:bottom, left:right]
+            pil_image = Image.fromarray(face_image)
+            pil_image.show()
         else:
             print("I already know this face, it is %s" % name)
 
