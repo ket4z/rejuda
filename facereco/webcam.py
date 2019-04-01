@@ -30,6 +30,24 @@ def add_face_to_db(connection, user_name, user_image):
     connection.commit()
 
 
+def encode_face_from_file(faceName):
+    # load this temp image to face reco
+    print("loading image from disk to face reco engine")
+    image_from_db = face_recognition.load_image_file("tempfile.jpg")
+    print("encoding face")
+    try:
+        face_encoding = face_recognition.face_encodings(image_from_db)[0]
+
+        # add encoded face to array of faces (face_encoding)
+        known_face_encodings.append(face_encoding)
+
+        # add name to known names
+        known_face_names.append(faceName)
+    except:
+        print("could not find any face on provided image")
+
+
+
 # main flow BEGIN #####################################
 
 db_connection = create_connection("facereco.db")
@@ -55,20 +73,8 @@ for db_face in db_faces:
     with open("tempfile.jpg", "wb") as f_temp:
         f_temp.write(db_face[2])
 
-    # load this temp image to face reco
-    print("loading image from disk to face reco engine")
-    image_from_db = face_recognition.load_image_file("tempfile.jpg")
-    print("encoding face")
-    try:
-        face_encoding = face_recognition.face_encodings(image_from_db)[0]
-
-        # add encoded face to array of faces (face_encoding)
-        known_face_encodings.append(face_encoding)
-
-        # add name to known names
-        known_face_names.append(db_face[1])
-    except:
-        print("could not find any face on provided image")
+    # TODO: call face encoding function!
+    encode_face_from_file(db_face[1])
 
     # delete temp file
     print("deleting temp file")
@@ -154,17 +160,12 @@ while True:
             pil_image.show()
             newName = easygui.enterbox("Enter new person's name")
             if newName is not None:
-                pil_image.save("tempNewFace.jpg")
-                with open("tempNewFace.jpg", "rb") as f_tempNewFace:
+                pil_image.save("tempfile.jpg")
+                with open("tempfile.jpg", "rb") as f_tempNewFace:
                     newFaceData = f_tempNewFace.read()
                 add_face_to_db(db_connection, newName, newFaceData)
-            # TODO: rovnou se ten oblicej nauc
-            image_from_db = face_recognition.load_image_file("tempNewFace.jpg")
-            face_encoding = face_recognition.face_encodings(image_from_db)[0]
-            # add encoded face to array of faces (face_encoding)
-            known_face_encodings.append(face_encoding)
-            # add name to known names
-            known_face_names.append(newName)
+            # rovnou se ten oblicej nauc
+            encode_face_from_file(newName)
 
         else:
             print("I already know this face, it is %s" % name)
