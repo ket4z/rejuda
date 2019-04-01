@@ -16,17 +16,17 @@ def create_connection(db_file):
 
 def select_faces_from_db(connection):
     cursor = connection.cursor()
-    cursor.execute("SELECT ID, name, image FROM faces WHERE image <> ''")
+    cursor.execute("SELECT ID, name, image FROM faces2 WHERE image <> ''")
     rows = cursor.fetchall()
     for row in rows:
         print("%d - %s" % (row[0], row[1]))
     return rows
 
-def add_face_to_db(connection, user_id, user_name, user_image):
+def add_face_to_db(connection, user_name, user_image):
+    # print(user_image)
+    print("adding user %s to db" % user_name)
     cursor = connection.cursor()
-    SQL = "INSERT INTO faces (ID, name, image) VALUES (%d, '%s', null)" % (user_id, user_name)
-    # print(SQL)
-    cursor.execute(SQL)
+    cursor.execute("INSERT INTO faces2 (name, image) VALUES (?, ?)", (user_name, user_image))
     connection.commit()
 
 
@@ -153,6 +153,19 @@ while True:
             pil_image = Image.fromarray(face_image)
             pil_image.show()
             newName = easygui.enterbox("Enter new person's name")
+            if newName is not None:
+                pil_image.save("tempNewFace.jpg")
+                with open("tempNewFace.jpg", "rb") as f_tempNewFace:
+                    newFaceData = f_tempNewFace.read()
+                add_face_to_db(db_connection, newName, newFaceData)
+            # TODO: rovnou se ten oblicej nauc
+            image_from_db = face_recognition.load_image_file("tempNewFace.jpg")
+            face_encoding = face_recognition.face_encodings(image_from_db)[0]
+            # add encoded face to array of faces (face_encoding)
+            known_face_encodings.append(face_encoding)
+            # add name to known names
+            known_face_names.append(newName)
+
         else:
             print("I already know this face, it is %s" % name)
 
