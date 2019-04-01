@@ -4,6 +4,7 @@ import cv2
 import sqlite3
 from sqlite3 import Error
 from PIL import Image
+import easygui
 
 def create_connection(db_file):
     try:
@@ -29,7 +30,7 @@ def add_face_to_db(connection, user_id, user_name, user_image):
     connection.commit()
 
 
-# mina flow BEGIN #####################################
+# main flow BEGIN #####################################
 
 db_connection = create_connection("facereco.db")
 print(db_connection)
@@ -151,6 +152,7 @@ while True:
             face_image = frame_copy[top:bottom, left:right]
             pil_image = Image.fromarray(face_image)
             pil_image.show()
+            newName = easygui.enterbox("Enter new person's name")
         else:
             print("I already know this face, it is %s" % name)
 
